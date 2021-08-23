@@ -19,9 +19,9 @@ func (e *Error) GetData() ErrorResponse {
 	return e.Data
 }
 
-func NewEasemobError(code int, str string) error {
+func NewEasemobError(code int, str []byte) error {
 	err := ErrorResponse{}
-	_ = json.Unmarshal([]byte(str), &err)
+	_ = json.Unmarshal(str, &err)
 	return &Error{Code: code, Data: err}
 }
 

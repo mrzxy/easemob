@@ -1,10 +1,7 @@
 package easemob
 
 import (
-	"encoding/json"
-	"net/http"
-
-	"github.com/guonaihong/gout"
+	"github.com/go-resty/resty/v2"
 )
 
 type targetType string
@@ -93,18 +90,5 @@ func (m *message) send(params *MessageRequest) (Response, error) {
 	if params.From != "" {
 		data["from"] = params.From
 	}
-	response := ""
-	var code int
-	err := gout.POST(m.Base.Config.URL + "/messages").SetJSON(data).SetHeader(m.Base.GetHeader()).BindBody(&response).Code(&code).Do()
-	if err != nil {
-		return Response{}, err
-	}
-	if code != http.StatusOK {
-		return Response{}, NewEasemobError(code, response)
-	}
-	resp := Response{}
-	if err = json.Unmarshal([]byte(response), &resp); err != nil {
-		return resp, err
-	}
-	return resp, nil
+	return m.Base.request(m.Base.config.URL+"/messages", resty.MethodPost, data)
 }
