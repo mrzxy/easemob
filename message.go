@@ -35,28 +35,28 @@ type MessageRequest struct {
 
 // SendTxt 发送文本消息
 // MessageRequest.Msg H{"msg":"发送第一条消息"}
-func (m *message) SendTxt(params *MessageRequest) (Response, error) {
+func (m *message) SendTxt(params MessageRequest) (Response, error) {
 	params.Msg["type"] = TypeTxt
 	return m.send(params)
 }
 
 // SendImage 发送图片消息
 // MessageRequest.Msg H{"url":"成功上传文件返回的UUID","filename":"语音名称","secret":"成功上传文件后返回的secret","size":"图片尺寸；height：高度，width：宽度 map[string]int"}
-func (m *message) SendImage(params *MessageRequest) (Response, error) {
+func (m *message) SendImage(params MessageRequest) (Response, error) {
 	params.Msg["type"] = TypeImg
 	return m.send(params)
 }
 
 // SendLoc 发送位置消息
 // MessageRequest.Msg H{"lat":"纬度","lng":"经度","addr":"地址，例如：中国北京市海淀区中关村"}
-func (m *message) SendLoc(params *MessageRequest) (Response, error) {
+func (m *message) SendLoc(params MessageRequest) (Response, error) {
 	params.Msg["type"] = TypeLoc
 	return m.send(params)
 }
 
 // SendAudio 发送语音消息
 // MessageRequest.Msg H{"url":"成功上传文件返回的UUID","filename":"语音名称","secret":"成功上传文件后返回的secret","length":"语音时间（单位：秒）"}
-func (m *message) SendAudio(params *MessageRequest) (Response, error) {
+func (m *message) SendAudio(params MessageRequest) (Response, error) {
 	params.Msg["type"] = TypeAudio
 	return m.send(params)
 }
@@ -67,25 +67,25 @@ func (m *message) SendAudio(params *MessageRequest) (Response, error) {
 //		"secret": "成功上传视频文件后返回的secret", "file_length":"视频文件大小（单位：字节）int",
 //		"thumb_secret":"成功上传视频缩略图后返回的secret", "url": "成功上传视频文件返回的UUID"
 //	}
-func (m *message) SendVideo(params *MessageRequest) (Response, error) {
+func (m *message) SendVideo(params MessageRequest) (Response, error) {
 	params.Msg["type"] = TypeVideo
 	return m.send(params)
 }
 
 // SendFile 发送文件消息
-func (m *message) SendFile(params *MessageRequest) (Response, error) {
+func (m *message) SendFile(params MessageRequest) (Response, error) {
 	params.Msg["type"] = TypeFile
 	return m.send(params)
 }
 
 // SendCustom 发送自定义消息
 // MessageRequest.Msg H{"customEvent":"用户自定义的事件类型", "customExts": "用户自定义的事件属性,类型必须是map[string]string"}
-func (m *message) SendCustom(params *MessageRequest) (Response, error) {
+func (m *message) SendCustom(params MessageRequest) (Response, error) {
 	params.Msg["type"] = TypeCustom
 	return m.send(params)
 }
 
-func (m *message) send(params *MessageRequest) (Response, error) {
+func (m *message) send(params MessageRequest) (Response, error) {
 	data := H{"target_type": params.TargetType, "target": params.Target, "msg": params.Msg}
 	if params.From != "" {
 		data["from"] = params.From
