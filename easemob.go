@@ -16,16 +16,16 @@ var header = map[string]string{
 }
 
 type Easemob struct {
-	Base
+	*Base
 	Message *message
 	Group   *group
 	User    *user
 }
 
 func NewEasemob(config Config) *Easemob {
-	base := Base{config: config, client: resty.New(), token: &token{}}
+	base := Base{config: config, client: resty.New()}
 	easemob := Easemob{
-		Base:    base,
+		Base:    &base,
 		Message: &message{Base: &base},
 		Group:   &group{Base: &base},
 		User:    &user{Base: &base},
@@ -33,19 +33,23 @@ func NewEasemob(config Config) *Easemob {
 	return &easemob
 }
 
+func (e *Easemob) SetDrive(drive cacheDrive) {
+	e.Base.drive = drive
+}
+
 type Base struct {
 	config Config
 	client *resty.Client
-	token  *token
+	drive  cacheDrive
 }
 
 func (b *Base) GetToken() string {
-	if b.token.isValid() {
-		return b.token.AccessToken
+	if b.drive.isValid() {
+		return b.drive.getToken()
 	}
 	// 重新获取token
-	b.token.Refresh(b.getToken())
-	return b.token.AccessToken
+	b.drive.refresh(b.getToken())
+	return b.drive.getToken()
 }
 
 func (b *Base) getToken() token {

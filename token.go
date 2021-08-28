@@ -1,6 +1,13 @@
 package easemob
 
-import "time"
+import (
+	"context"
+	"fmt"
+	"github.com/go-redis/redis/v8"
+	"time"
+)
+
+const tokenKey = "hxToken"
 
 type token struct {
 	AccessToken string `json:"access_token"`
@@ -9,15 +16,29 @@ type token struct {
 	LastTime    int64  `json:"last_time"`
 }
 
-// isValid 是否有效
-func (t *token) isValid() bool {
-	return t.ExpiresIn+t.LastTime-600 > time.Now().Unix()
+type cacheDrive interface {
+	isValid() bool
+	refresh(token2 token)
+	getToken() string
 }
 
-// Refresh 刷新token
-func (t *token) Refresh(token token) {
-	t.AccessToken = token.AccessToken
-	t.ExpiresIn = token.ExpiresIn
-	t.Application = token.Application
-	t.LastTime = time.Now().Unix()
+type RedisDrive struct {
+	Client *redis.Client
+}
+
+func (r *RedisDrive) isValid() bool {
+	_, err := r.Client.Get(context.Background(), tokenKey).Result()
+	return err == nil
+}
+
+func (r RedisDrive) refresh(token2 token) {
+	r.Client.Set(context.Background(), tokenKey, token2.AccessToken, time.Duration(token2.ExpiresIn)*time.Second-600)
+}
+
+func (r *RedisDrive) getToken() string {
+	t, err := r.Client.Get(context.Background(), tokenKey).Result()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return t
 }
