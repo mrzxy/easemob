@@ -6,12 +6,13 @@
 ```go
 import "github.com/Daniel66666666/easemob"
 
+rc := redis.NewClient(&redis.Options{Addr: "192.168.0.13:6379", Password: "", DB: 0})
 client := easemob.NewEasemob(easemob.Config{
     ClientId:     "XXXXXXXXX",
     ClientSecret: "XXXXXXXXXXXXXX",
     URL:          "https://a1.easemob.com/XXXXXXXXXXX/demo",
 })
-
+client.SetDrive(&easemob.RedisDrive{Client: rc})
 // 发送文本消息
 _, err := client.Message.SendTxt(&easemob.MessageRequest{TargetType: easemob.TargetTypeUsers, Target: []string{"user id"}, Msg: easemob.H{"msg": "first msg!"}, From: "user id", Ext: ""})
 
