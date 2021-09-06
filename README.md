@@ -14,7 +14,7 @@ client := easemob.NewEasemob(easemob.Config{
 })
 client.SetDrive(&easemob.RedisDrive{Client: rc})
 // 发送文本消息
-_, err := client.Message.SendTxt(&easemob.MessageRequest{TargetType: easemob.TargetTypeUsers, Target: []string{"user id"}, Msg: easemob.H{"msg": "first msg!"}, From: "user id", Ext: ""})
+_, err := client.Message.SendTxt(easemob.MessageRequest{TargetType: easemob.TargetTypeUsers, Target: []string{"user id"}, Msg: easemob.H{"msg": "first msg!"}, From: "user id", Ext: ""})
 
 // 获取群成员
 users, err := client.Group.GetUsers("group id")
